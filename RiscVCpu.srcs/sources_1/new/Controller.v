@@ -9,6 +9,8 @@ module Controller (
     output wire bne,                      // bne instruction
     output wire blt,                      // blt instruction
     output wire bltu,                     // bltu instruction
+    output wire bge,                      // bge instruction
+    output wire bgeu,                     // bgeu instruction
     output wire MemRead,                  // Enable memory read
     output reg [1:0] ALUOp,               // ALU operation selector
     output wire MemWrite,                 // Enable memory write
@@ -38,6 +40,8 @@ module Controller (
     assign bltu           = (opcode == 7'b1100011 && funct3 == 3'b110); // Branch less than unsigned
     assign Jump           = (opcode == 7'b1101111);           // jal
     assign jalr           = (opcode == 7'b1100111 && funct3 == 3'b000); // jalr
+    assign bge            = (opcode == 7'b1100011 && funct3 == 3'b101); // Branch greater or equal
+    assign bgeu           = (opcode == 7'b1100011 && funct3 == 3'b111); // Branch greater or equal unsigned
 
     // I/O address detection
     localparam IO_ADDRESS_HIGH = 22'h3FFFFF; // Upper bits for I/O addresses (0xfffffcXX)
