@@ -77,7 +77,7 @@ module ALU (
         case (ALUControl)
             ALU_AND:ALUResult = ReadData1 & operand2;    //and
             ALU_OR:   ALUResult = ReadData1 | operand2;    //or
-            ALU_ADD: ALUResult = ReadData1 + operand2;    //add
+            ALU_ADD: ALUResult = ReadData1 + operand2;    //add (base+imm address)
             ALU_SUB:ALUResult = ReadData1 - operand2;    // sub
             ALU_SLL:ALUResult = ReadData1 << operand2[4:0]; // sll
             ALU_SRA:ALUResult = $signed(ReadData1) >>> operand2[4:0]; // sra
