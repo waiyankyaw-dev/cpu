@@ -16,6 +16,7 @@ proc create_report { reportName command } {
     send_msg_id runtcl-5 warning "$msg"
   }
 }
+set_param xicom.use_bs_reader 1
 create_project -in_memory -part xc7a35tcsg324-1
 
 set_param project.singleFileAddWarning.threshold 0
@@ -29,8 +30,8 @@ set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property ip_output_repo c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
-add_files c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/prgrom/testcaseCPU.coe
-add_files c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/RAM/dmem32word.coe
+add_files C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/prgrom/testcaseCPU.coe
+add_files C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/RAM/dmem32word.coe
 read_verilog -library xil_defaultlib {
   C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/imports/new/ALU.v
   C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/new/Clock.v
@@ -44,15 +45,15 @@ read_verilog -library xil_defaultlib {
   C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/new/Tube.v
   C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/imports/new/CPU.v
 }
-read_ip -quiet c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk.xci
+read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk.xci
 set_property used_in_implementation false [get_files -all c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk_board.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk_ooc.xdc]
 
-read_ip -quiet c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/prgrom/prgrom.xci
+read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/prgrom/prgrom.xci
 set_property used_in_implementation false [get_files -all c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/prgrom/prgrom_ooc.xdc]
 
-read_ip -quiet c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/RAM/RAM.xci
+read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/RAM/RAM.xci
 set_property used_in_implementation false [get_files -all c:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/RAM/RAM_ooc.xdc]
 
 # Mark all dcp files as not used in implementation to prevent them from being

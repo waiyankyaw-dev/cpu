@@ -11,13 +11,13 @@ module MemOrIO(
     // Address and data buses
     input [31:0] addr_in,       // Address from ALU
     input [31:0] m_rdata,       // Data read from memory
-    input [15:0] io_rdata,      // Data read from I/O devices
+    input [15:0] io_rdata,      // Data read from I/O devices(from switch)
     input [31:0] r_rdata,       // Data from register file (for writes)
     
     // Output connections
     output [31:0] addr_out,     // Address to memory and I/O devices
-    output reg [31:0] r_wdata,  // Data to register file
-    output reg [31:0] write_data,     // Data to memory/I/O (potentially sign-extended)
+    output reg [31:0] r_wdata,  // write Data to register file
+    output reg [31:0] write_data,     // Data to memory or I/O (potentially sign-extended) <write to IO device, store>
     output reg [31:0] write_data_32,  // Original 32-bit data for I/O devices
     
     // Peripheral select signals
@@ -40,24 +40,26 @@ module MemOrIO(
     localparam TUBE_ADDR_RANGE_END = 8'h7F;
     
     // Special address for sequential display
-    localparam TUBE_SPECIAL_ADDR = 8'h64;
+//    localparam TUBE_SPECIAL_ADDR = 8'h64;
 
     // Pass address directly to memory and I/O
     assign addr_out = addr_in;
     
     // Generate chip select signals based on address range and I/O operation
+    //input
     assign SwitchCtrl = (IOReadSigned || IOReadUnsigned) && 
                        (addr_in[7:0] >= SWITCH_ADDR_RANGE_START && 
                         addr_in[7:0] <= SWITCH_ADDR_RANGE_END);
+
+    //output
     
     assign LEDCtrl = IOWrite && (addr_in[7:0] >= LED_ADDR_RANGE_START && 
                                 addr_in[7:0] <= LED_ADDR_RANGE_END);
     
-    assign TubeCtrl = IOWrite && ((addr_in[7:0] >= TUBE_ADDR_RANGE_START && 
-                                  addr_in[7:0] <= TUBE_ADDR_RANGE_END) || 
-                                  addr_in[7:0] == TUBE_SPECIAL_ADDR);
+    assign TubeCtrl = IOWrite && (addr_in[7:0] >= TUBE_ADDR_RANGE_START && 
+                                  addr_in[7:0] <= TUBE_ADDR_RANGE_END);
 
-    // Data handling for register writeback
+    // Data handling for register writeback (read from memory of I/O) (load)
     always @(*) begin
         // Default to memory data
         r_wdata = m_rdata;
@@ -82,10 +84,10 @@ module MemOrIO(
                 end
                 
                 // Buttons (use bottom 4 bits only)
-                SWITCH_ADDR_RANGE_START + 8'h20, 
-                SWITCH_ADDR_RANGE_START + 8'h24, 
-                SWITCH_ADDR_RANGE_START + 8'h28, 
-                SWITCH_ADDR_RANGE_START + 8'h2C: begin
+                SWITCH_ADDR_RANGE_START + 8'h20, //Test case button (button[3])
+                SWITCH_ADDR_RANGE_START + 8'h24, //Reset button (button[2])
+                SWITCH_ADDR_RANGE_START + 8'h28, //Input A button (button[0])
+                SWITCH_ADDR_RANGE_START + 8'h2C: begin //Input B button (button[1])
                     r_wdata = {28'b0, io_rdata[3:0]};            // Always zero-extend buttons
                 end
                 

@@ -29,17 +29,17 @@ module Led(
                     led <= ledwdata;                   // Control all 16 LEDs
                 
                 LEFT_LEDS_ADDR:
-                    led <= {ledwdata[7:0], led[7:0]};  // Control left 8 LEDs
+                    led <= {ledwdata[7:0], 8'b0};  // Control left 8 LEDs
                 
                 RIGHT_LEDS_ADDR:
-                    led <= {led[15:8], ledwdata[7:0]}; // Control right 8 LEDs
+                    led <= {8'b0, ledwdata[7:0]}; // Control right 8 LEDs
                 
                 // Additional feature: individual LED control
                 SINGLE_LED_BASE_ADDR:
-                    led[0] <= ledwdata[0];            // Control LED 0
+                    led <= { 15'b0,ledwdata[0]};            // Control LED 0
                 
                 SINGLE_LED_BASE_ADDR + 8'h01:
-                    led[1] <= ledwdata[0];            // Control LED 1
+                    led <= { 14'b0 ,ledwdata[0], 1'b0};            // Control LED 1
                 
                 // More individual LED controls can be added here
                 

@@ -14,11 +14,11 @@ module Clock(
     );
     
     // Implement a custom clock divider for display
-    ClockDivider slow_clock(
-        .clk_in(clk_in1),     // Input clock
-        .rst(rst),            // Reset signal
-        .clk_out(clk_out2)    // Output slow clock
-    );
+//    ClockDivider slow_clock(
+//        .clk_in(clk_in1),     // Input clock
+//        .rst(rst),            // Reset signal
+//        .clk_out(clk_out2)    // Output slow clock
+//    );
 
 endmodule
 
