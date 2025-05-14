@@ -7,7 +7,7 @@ module Switch_tb();
     reg ioReadUnsigned;
     reg ioReadSigned;
     reg switchCtrl;
-    reg [15:0] switch;
+    reg [11:0] switch;          // Changed from [15:0] to [11:0]
     reg [3:0] button;
     reg [7:0] switchAddr;
     wire [15:0] switchRdata;
@@ -38,7 +38,7 @@ module Switch_tb();
         ioReadUnsigned = 0;
         ioReadSigned = 0;
         switchCtrl = 0;
-        switch = 16'h0000;
+        switch = 12'h000;        // Changed from 16'h0000
         button = 4'h0;
         switchAddr = 8'h00;
         
@@ -47,9 +47,9 @@ module Switch_tb();
         #20 rst = 0;
         #20 rst = 1;
         
-        // Test 1: Read all 16 switches (address 0x00)
-        $display("Test 1: Reading all 16 switches (address 0x00)");
-        switch = 16'hA5A5; // Set switch value
+        // Test 1: Read all 12 switches (address 0x00)
+        $display("Test 1: Reading all 12 switches (address 0x00)");
+        switch = 12'hA5A;        // Changed from 16'hA5A5
         switchAddr = 8'h00;
         ioReadSigned = 1;
         switchCtrl = 1;
@@ -58,7 +58,7 @@ module Switch_tb();
         
         // Test 2: Read upper 8 switches (address 0x10)
         $display("Test 2: Reading upper 8 switches (address 0x10)");
-        switch = 16'hBEEF;
+        switch = 12'hBEE;        // Changed from 16'hBEEF
         switchAddr = 8'h10;
         ioReadUnsigned = 1;
         ioReadSigned = 0;
@@ -91,9 +91,24 @@ module Switch_tb();
         // Test 4: Disable switch control
         $display("Test 4: Disabled switch control");
         switchCtrl = 0;
-        switch = 16'h1234;
+        switch = 12'h123;        // Changed from 16'h1234
         #20;
         $display("Switches: 0x%h, Read data: 0x%h (should remain unchanged)", switch, switchRdata);
+        
+        // Test 5: Verify 12-bit to 16-bit mapping
+        $display("Test 5: Verifying 12-bit to 16-bit mapping");
+        switchCtrl = 1;
+        switch = 12'hFFF;        // Maximum 12-bit value
+        switchAddr = 8'h00;
+        #20;
+        $display("12-bit Switches: 0x%h, 16-bit Read data: 0x%h (should be 0x0FFF)", switch, switchRdata);
+        
+        // Test 6: Verify upper 8 bits of 12-bit input
+        $display("Test 6: Reading upper 8 bits of 12-bit input");
+        switch = 12'hABC;        // 0xABC
+        switchAddr = 8'h10;
+        #20;
+        $display("12-bit Switches: 0x%h, Upper 8 bits read: 0x%h (should show 0xAB)", switch, switchRdata);
         
         // End simulation
         #20 $finish;

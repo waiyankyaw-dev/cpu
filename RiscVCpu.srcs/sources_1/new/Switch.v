@@ -6,14 +6,14 @@ module Switch(
     input ioReadUnsigned,       // Unsigned read control
     input ioReadSigned,         // Signed read control
     input switchCtrl,           // Switch chip select
-    input [15:0] switch,        // 16 physical switches
+    input [11:0] switch,        //12 swithches
     input [3:0] button,         // 4 physical buttons
     input [7:0] switchAddr,     // Address to select specific input
-    output reg [15:0] switchRdata // Data output to CPU
+    output reg [15:0] switchRdata // Data output to CPU (keep 16-bit output)
 );
 
     // Define specific button/switch address mappings
-    localparam FULL_SWITCH_ADDR = 8'h00;     // All 16 switches
+    localparam FULL_SWITCH_ADDR = 8'h00;     // All switches
     localparam UPPER_SWITCH_ADDR = 8'h10;    // Upper 8 switches
     localparam TEST_BUTTON_ADDR = 8'h20;     // Test case button
     localparam RESET_BUTTON_ADDR = 8'h24;    // Reset/end test button
@@ -30,25 +30,25 @@ module Switch(
             // Address decoding for different inputs
             case (switchAddr)
                 FULL_SWITCH_ADDR: 
-                    switchRdata <= switch;                     // Read all 16 switches
+                    switchRdata <= {4'b0000, switch};         // Zero-extend 12-bit switches to 16 bits
                 
                 UPPER_SWITCH_ADDR: 
-                    switchRdata <= {8'h00, switch[15:8]};      // Read upper 8 switches
+                    switchRdata <= {8'h00, switch[11:4]};     // Read upper 8 bits of 12-bit switches
                 
                 TEST_BUTTON_ADDR: 
-                    switchRdata <= {15'b0, button[3]};         // Test case button
+                    switchRdata <= {15'b0, button[3]};        // Test case button
                 
                 RESET_BUTTON_ADDR: 
-                    switchRdata <= {15'b0, button[2]};         // Reset button
+                    switchRdata <= {15'b0, button[2]};        // Reset button
                 
                 INPUT_A_BUTTON_ADDR: 
-                    switchRdata <= {15'b0, button[0]};         // Input A button
+                    switchRdata <= {15'b0, button[0]};        // Input A button
                 
                 INPUT_B_BUTTON_ADDR: 
-                    switchRdata <= {15'b0, button[1]};         // Input B button
+                    switchRdata <= {15'b0, button[1]};        // Input B button
                 
                 default: 
-                    switchRdata <= switchRdata;                // Maintain current value
+                    switchRdata <= switchRdata;               // Maintain current value
             endcase
         end
         else begin
@@ -56,5 +56,4 @@ module Switch(
             switchRdata <= switchRdata;
         end
     end
-
 endmodule

@@ -93,45 +93,45 @@ module Tube(
             // Update segment patterns
             if (sel > 8'b00001000) begin
                 case (dispDat)
-                    4'h0: tube0 <= 8'hfc;
-                    4'h1: tube0 <= 8'h60;
-                    4'h2: tube0 <= 8'hda;
-                    4'h3: tube0 <= 8'hf2;
-                    4'h4: tube0 <= 8'h66;
-                    4'h5: tube0 <= 8'hb6;
-                    4'h6: tube0 <= 8'hbe;
-                    4'h7: tube0 <= 8'he0;
-                    4'h8: tube0 <= 8'hfe;
-                    4'h9: tube0 <= 8'hf6;
-                    4'ha: tube0 <= 8'hee;
-                    4'hb: tube0 <= 8'h3e;
-                    4'hc: tube0 <= 8'h9c;
-                    4'hd: tube0 <= 8'h7a;
-                    4'he: tube0 <= 8'h9e;
-                    4'hf: tube0 <= 8'h8e;
-                    default: tube0 <= 8'h00;
+                    4'h0: tube0 <= 8'b11111100;  // 8'hfc
+                        4'h1: tube0 <= 8'b01100000;  // 8'h60
+                        4'h2: tube0 <= 8'b11011010;  // 8'hda
+                        4'h3: tube0 <= 8'b11110010;  // 8'hf2
+                        4'h4: tube0 <= 8'b01100110;  // 8'h66
+                        4'h5: tube0 <= 8'b10110110;  // 8'hb6
+                        4'h6: tube0 <= 8'b10111110;  // 8'hbe
+                        4'h7: tube0 <= 8'b11100000;  // 8'he0
+                        4'h8: tube0 <= 8'b11111110;  // 8'hfe
+                        4'h9: tube0 <= 8'b11110110;  // 8'hf6
+                        4'ha: tube0 <= 8'b11101110;  // 8'hee
+                        4'hb: tube0 <= 8'b00111110;  // 8'h3e
+                        4'hc: tube0 <= 8'b10011100;  // 8'h9c
+                        4'hd: tube0 <= 8'b01111010;  // 8'h7a
+                        4'he: tube0 <= 8'b10011110;  // 8'h9e
+                        4'hf: tube0 <= 8'b10001110;  // 8'h8e
+                        default: tube0 <= 8'b00000000;  // 8'h00
                 endcase
                 tube1 <= 8'h00;  // Clear lower segments when showing upper
             end
             else begin
                 case (dispDat)
-                    4'h0: tube1 <= 8'hfc;
-                    4'h1: tube1 <= 8'h60;
-                    4'h2: tube1 <= 8'hda;
-                    4'h3: tube1 <= 8'hf2;
-                    4'h4: tube1 <= 8'h66;
-                    4'h5: tube1 <= 8'hb6;
-                    4'h6: tube1 <= 8'hbe;
-                    4'h7: tube1 <= 8'he0;
-                    4'h8: tube1 <= 8'hfe;
-                    4'h9: tube1 <= 8'hf6;
-                    4'ha: tube1 <= 8'hee;
-                    4'hb: tube1 <= 8'h3e;
-                    4'hc: tube1 <= 8'h9c;
-                    4'hd: tube1 <= 8'h7a;
-                    4'he: tube1 <= 8'h9e;
-                    4'hf: tube1 <= 8'h8e;
-                    default: tube1 <= 8'h00;
+                    4'h0: tube1 <= 8'b11111100;  // 8'hfc
+                        4'h1: tube1 <= 8'b01100000;  // 8'h60
+                        4'h2: tube1 <= 8'b11011010;  // 8'hda
+                        4'h3: tube1 <= 8'b11110010;  // 8'hf2
+                        4'h4: tube1 <= 8'b01100110;  // 8'h66
+                        4'h5: tube1 <= 8'b10110110;  // 8'hb6
+                        4'h6: tube1 <= 8'b10111110;  // 8'hbe
+                        4'h7: tube1 <= 8'b11100000;  // 8'he0
+                        4'h8: tube1 <= 8'b11111110;  // 8'hfe
+                        4'h9: tube1 <= 8'b11110110;  // 8'hf6
+                        4'ha: tube1 <= 8'b11101110;  // 8'hee
+                        4'hb: tube1 <= 8'b00111110;  // 8'h3e
+                        4'hc: tube1 <= 8'b10011100;  // 8'h9c
+                        4'hd: tube1 <= 8'b01111010;  // 8'h7a
+                        4'he: tube1 <= 8'b10011110;  // 8'h9e
+                        4'hf: tube1 <= 8'b10001110;  // 8'h8e
+                        default: tube1 <= 8'b00000000;  // 8'h00
                 endcase
                 tube0 <= 8'h00;  // Clear upper segments when showing lower
             end

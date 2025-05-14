@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
-| Date             : Wed May 14 22:04:19 2025
+| Date             : Wed May 14 23:33:39 2025
 | Host             : LAPTOP-MS0PAGLN running 64-bit major release  (build 9200)
 | Command          : report_power -file CPU_power_routed.rpt -pb CPU_power_summary_routed.pb -rpx CPU_power_routed.rpx
 | Design           : CPU
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.247        |
+| Total On-Chip Power (W)  | 0.246        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.173        |
+| Dynamic (W)              | 0.172        |
 | Device Static (W)        | 0.073        |
 | Effective TJA (C/W)      | 4.8          |
 | Max Ambient (C)          | 83.8         |
@@ -53,18 +53,18 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.002 |        5 |       --- |             --- |
-| Slice Logic    |     0.005 |     3519 |       --- |             --- |
-|   LUT as Logic |     0.004 |     1702 |     20800 |            8.18 |
-|   F7/F8 Muxes  |    <0.001 |      263 |     32600 |            0.81 |
+| Slice Logic    |     0.004 |     3248 |       --- |             --- |
+|   LUT as Logic |     0.004 |     1561 |     20800 |            7.50 |
 |   CARRY4       |    <0.001 |       45 |      8150 |            0.55 |
-|   Register     |    <0.001 |     1213 |     41600 |            2.92 |
+|   F7/F8 Muxes  |    <0.001 |      184 |     32600 |            0.56 |
+|   Register     |    <0.001 |     1209 |     41600 |            2.91 |
 |   Others       |     0.000 |      102 |       --- |             --- |
-| Signals        |     0.008 |     3034 |       --- |             --- |
+| Signals        |     0.008 |     2912 |       --- |             --- |
 | Block RAM      |     0.005 |       29 |        50 |           58.00 |
 | PLL            |     0.103 |        1 |         5 |           20.00 |
-| I/O            |     0.050 |       62 |       210 |           29.52 |
+| I/O            |     0.050 |       58 |       210 |           27.62 |
 | Static Power   |     0.073 |          |           |                 |
-| Total          |     0.247 |          |           |                 |
+| Total          |     0.246 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -74,7 +74,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
 +-----------+-------------+-----------+-------------+------------+
-| Vccint    |       1.000 |     0.040 |       0.030 |      0.011 |
+| Vccint    |       1.000 |     0.039 |       0.029 |      0.011 |
 | Vccaux    |       1.800 |     0.066 |       0.054 |      0.013 |
 | Vcco33    |       3.300 |     0.015 |       0.014 |      0.001 |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |
@@ -145,7 +145,7 @@ Table of Contents
 +------------------------------------------------+-----------+
 | Name                                           | Power (W) |
 +------------------------------------------------+-----------+
-| CPU                                            |     0.173 |
+| CPU                                            |     0.172 |
 |   alu                                          |    <0.001 |
 |   clock                                        |     0.103 |
 |     clkGenerator                               |     0.103 |
@@ -188,8 +188,8 @@ Table of Contents
 |                 prim_init.ram                  |    <0.001 |
 |               ramloop[9].ram.r                 |    <0.001 |
 |                 prim_init.ram                  |    <0.001 |
-|   decoder                                      |     0.006 |
-|   iFetch                                       |     0.010 |
+|   decoder                                      |     0.005 |
+|   iFetch                                       |     0.009 |
 |     urom                                       |     0.004 |
 |       U0                                       |     0.004 |
 |         inst_blk_mem_gen                       |     0.004 |
@@ -227,9 +227,9 @@ Table of Contents
 |                 prim_init.ram                  |    <0.001 |
 |               ramloop[9].ram.r                 |    <0.001 |
 |                 prim_init.ram                  |    <0.001 |
-|   led__0                                       |    <0.001 |
-|   switch__0                                    |    <0.001 |
-|   tube                                         |     0.002 |
+|   ledModule                                    |    <0.001 |
+|   switchModule                                 |    <0.001 |
+|   tubeModule                                   |     0.002 |
 +------------------------------------------------+-----------+
 
 

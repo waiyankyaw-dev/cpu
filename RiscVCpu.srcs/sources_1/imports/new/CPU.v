@@ -3,7 +3,7 @@
 module CPU(
     input fpgaRst,               // FPGA reset button
     input fpgaClk,               // FPGA clock
-    input [15:0] switch,         // 16 DIP switches
+    input [11:0] switch,         // 11 DIP switches
     input [3:0] button,          // 4 push buttons
     
     output [15:0] led,           // 16 LEDs
@@ -168,7 +168,7 @@ module CPU(
     );
 
     // IO peripherals
-    Switch switch(
+    Switch switchModule(
         .clk(fpgaClk),
         .rst(rst),
         .ioReadUnsigned(ioReadUnsigned),
@@ -180,7 +180,7 @@ module CPU(
         .switchRdata(ioRdata)
     );
     
-    Led led(
+    Led ledModule(
         .clk(cpuClk),
         .rst(rst),
         .ioWrite(ioWrite),
@@ -190,7 +190,7 @@ module CPU(
         .led(led)
     );
     
-    Tube tube(
+    Tube tubeModule(
         .clk(cpuClk),
         .fpgaClk(fpgaClk),
         .rst(rst),

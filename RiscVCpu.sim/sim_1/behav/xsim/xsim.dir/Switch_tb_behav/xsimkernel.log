@@ -1,4 +1,4 @@
-Running: xsim.dir/Switch_tb_behav/xsimk.exe -simmode gui -wdb Switch_tb_behav.wdb -simrunnum 0 -socket 60186
+Running: xsim.dir/Switch_tb_behav/xsimk.exe -simmode gui -wdb Switch_tb_behav.wdb -simrunnum 0 -socket 55737
 Design successfully loaded
-Design Loading Memory Usage: 11580 KB (Peak: 11580 KB)
+Design Loading Memory Usage: 11588 KB (Peak: 11588 KB)
 Design Loading CPU Usage: 46 ms
