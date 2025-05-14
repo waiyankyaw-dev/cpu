@@ -3,63 +3,62 @@
 module Decoder(
     input clk,
     input rst,
-    input [31:0] ALU_result,
-    input MemOrIOtoReg,
+    input [31:0] aluResult,
+    input memOrIOtoReg,
     input regWrite,
     input [31:0] inst,
     input [31:0] ra,
     input jump,
-    input [31:0] IOData,
-    input IOReadSigned,      
-    input IOReadUnsigned,    
+    input [31:0] ioData,
+    input ioReadSigned,      
+    input ioReadUnsigned,    
     output [31:0] rs1Data,
     output [31:0] rs2Data,
     output reg [31:0] imm32
 );
 
-    // Change to match reference style
-    reg [31:0] registers [31:0];  // Changed from [0:31] to [31:0] to match reference
+    reg [31:0] registers [31:0]; 
     wire [4:0] writeReg;
     reg [31:0] writeData;
     integer i;
 
-    // Simplified register addressing like reference
+    // Register addressing
     assign writeReg = inst[11:7];
-    assign rs1Data = registers[inst[19:15]];  // Removed lui check to match reference
+    assign rs1Data = registers[inst[19:15]]; 
     assign rs2Data = registers[inst[24:20]];
     
     // Write data selection
     always @* begin
-        if(MemOrIOtoReg) begin
-            if(IOReadSigned) begin
+        if(memOrIOtoReg) begin
+            if(ioReadSigned) begin
                 if(inst[14:12] == 3'b000)
-                    writeData = {{24{IOData[7]}}, IOData[7:0]};
+                    writeData = {{24{ioData[7]}}, ioData[7:0]};
                 else
-                    writeData = IOData;
+                    writeData = ioData;
             end
-            else if(IOReadUnsigned)
-                writeData = {24'b0, IOData[7:0]};
+            else if(ioReadUnsigned)
+                writeData = {24'b0, ioData[7:0]};
             else
-                writeData = IOData;
+                writeData = ioData;
         end
         else if(jump)
             writeData = ra;
         else
-            writeData = ALU_result;
+            writeData = aluResult;
     end
 
-    // Register file handling - matched to reference style
+    // Register file handling
     always @(posedge clk) begin
-        if (!rst) begin  // Changed to match reference (!rst instead of ~rst)
+        if (!rst) begin 
             for (i = 0; i < 32; i = i + 1)
                 registers[i] <= 32'h0;
         end
-        else if (regWrite && writeReg != 0) begin  // Changed condition to match reference
+        else if (regWrite && writeReg != 0) begin
             registers[writeReg] <= writeData;
         end
     end
 
-    // Immediate generation - reorganized to match reference style
+    // Immediate generation
     always @(*) begin
         case(inst[6:0])
             // I-type instructions grouped together

@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
-| Date             : Wed May 14 21:10:46 2025
+| Date             : Wed May 14 22:04:19 2025
 | Host             : LAPTOP-MS0PAGLN running 64-bit major release  (build 9200)
 | Command          : report_power -file CPU_power_routed.rpt -pb CPU_power_summary_routed.pb -rpx CPU_power_routed.rpx
 | Design           : CPU
@@ -127,13 +127,13 @@ Table of Contents
 2.2 Clock Constraints
 ---------------------
 
-+----------------------------------+------------------------------------------+-----------------+
-| Clock                            | Domain                                   | Constraint (ns) |
-+----------------------------------+------------------------------------------+-----------------+
-| Clock/clk_generator/inst/clk_in1 | fpga_clk_IBUF_BUFG                       |            10.0 |
-| clk_out1_cpuclk                  | Clock/clk_generator/inst/clk_out1_cpuclk |            43.5 |
-| clkfbout_cpuclk                  | Clock/clk_generator/inst/clkfbout_cpuclk |            50.0 |
-+----------------------------------+------------------------------------------+-----------------+
++---------------------------------+-----------------------------------------+-----------------+
+| Clock                           | Domain                                  | Constraint (ns) |
++---------------------------------+-----------------------------------------+-----------------+
+| clk_out1_cpuclk                 | clock/clkGenerator/inst/clk_out1_cpuclk |            43.5 |
+| clkfbout_cpuclk                 | clock/clkGenerator/inst/clkfbout_cpuclk |            50.0 |
+| clock/clkGenerator/inst/clk_in1 | fpgaClk_IBUF_BUFG                       |            10.0 |
++---------------------------------+-----------------------------------------+-----------------+
 
 
 3. Detailed Reports
@@ -146,11 +146,11 @@ Table of Contents
 | Name                                           | Power (W) |
 +------------------------------------------------+-----------+
 | CPU                                            |     0.173 |
-|   ALU                                          |    <0.001 |
-|   Clock                                        |     0.103 |
-|     clk_generator                              |     0.103 |
+|   alu                                          |    <0.001 |
+|   clock                                        |     0.103 |
+|     clkGenerator                               |     0.103 |
 |       inst                                     |     0.103 |
-|   DataMem                                      |     0.003 |
+|   dataMem                                      |     0.003 |
 |     udram                                      |     0.003 |
 |       U0                                       |     0.003 |
 |         inst_blk_mem_gen                       |     0.003 |
@@ -188,8 +188,8 @@ Table of Contents
 |                 prim_init.ram                  |    <0.001 |
 |               ramloop[9].ram.r                 |    <0.001 |
 |                 prim_init.ram                  |    <0.001 |
-|   Decoder                                      |     0.006 |
-|   IFetch                                       |     0.010 |
+|   decoder                                      |     0.006 |
+|   iFetch                                       |     0.010 |
 |     urom                                       |     0.004 |
 |       U0                                       |     0.004 |
 |         inst_blk_mem_gen                       |     0.004 |
@@ -227,9 +227,9 @@ Table of Contents
 |                 prim_init.ram                  |    <0.001 |
 |               ramloop[9].ram.r                 |    <0.001 |
 |                 prim_init.ram                  |    <0.001 |
-|   Led                                          |    <0.001 |
-|   Switch                                       |    <0.001 |
-|   Tube                                         |     0.002 |
+|   led__0                                       |    <0.001 |
+|   switch__0                                    |    <0.001 |
+|   tube                                         |     0.002 |
 +------------------------------------------------+-----------+
 
 

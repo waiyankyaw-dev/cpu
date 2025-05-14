@@ -13,9 +13,9 @@ module IFetch(
     input bge,           // Branch if greater or equal
     input bgeu,          // Branch if greater or equal unsigned
     input zero,          // Zero flag from ALU
-    input negative,       // Negative flag from ALU
-    input unsigned_less,  // Unsigned less flag from ALU
-    input [31:0] ALUResult,
+    input negative,      // Negative flag from ALU
+    input unsignedLess,  // Unsigned less flag from ALU
+    input [31:0] aluResult,
     output reg [31:0] ra,
     output wire [31:0] inst
 );
@@ -35,25 +35,25 @@ module IFetch(
     assign addra = pc[15:2];
 
     // Next PC calculation logic
-always @(*) begin
-    if ((beq && zero) ||                     // Branch if equal and zero flag set
-        (bne && ~zero) ||                    // Branch if not equal and zero flag clear
-        (blt && negative) ||                 // Branch if less than and result negative
-        (bge && ~negative) ||                // Branch if greater/equal and result non-negative
-        (bltu && unsigned_less) ||           // Branch if less than unsigned
-        (bgeu && ~unsigned_less)) begin      // Branch if greater/equal unsigned
-        npc = pc + imm32;                    // Branch target address
-    end 
-    else if (jump) begin                     // JAL instruction
-        npc = pc + imm32;                    // Jump target address
-    end 
-    else if (jalr) begin                     // JALR instruction
-        npc = ALUResult;                     // Jump to address in register
-    end 
-    else begin
-        npc = pc + 4;                        // Sequential execution
+    always @(*) begin
+        if ((beq && zero) ||                     // Branch if equal and zero flag set
+            (bne && ~zero) ||                    // Branch if not equal and zero flag clear
+            (blt && negative) ||                 // Branch if less than and result negative
+            (bge && ~negative) ||                // Branch if greater/equal and result non-negative
+            (bltu && unsignedLess) ||            // Branch if less than unsigned
+            (bgeu && ~unsignedLess)) begin       // Branch if greater/equal unsigned
+            npc = pc + imm32;                    // Branch target address
+        end 
+        else if (jump) begin                     // JAL instruction
+            npc = pc + imm32;                    // Jump target address
+        end 
+        else if (jalr) begin                     // JALR instruction
+            npc = aluResult;                     // Jump to address in register
+        end 
+        else begin
+            npc = pc + 4;                        // Sequential execution
+        end
     end
-end
 
     // Return address calculation
     always @(posedge clk) begin

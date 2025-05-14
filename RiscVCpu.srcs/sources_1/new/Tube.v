@@ -2,56 +2,52 @@
 
 module Tube(
     input clk,                  // CPU clock
-    input fpga_clk,            // FPGA base clock
-    input rst,                 // Reset signal
-    input clk_div_2s,         // Slow clock for sequential display
-//    input button,             // Test case button
-//    input button2,            // Reset button
-    input IOWrite,            // I/O write enable
-    input TubeCtrl,           // Tube chip select
-    input [7:0] tubeaddr,     // Address for display selection
-    input [15:0] tubewdata,   // 16-bit data to display
-    input [31:0] tubewdata32, // 32-bit data to display
-//    input [15:0] testcase,    // Test case identifier
+    input fpgaClk,              // FPGA base clock
+    input rst,                  // Reset signal
+    input ioWrite,              // I/O write enable
+    input tubeCtrl,             // Tube chip select
+    input [7:0] tubeAddr,       // Address for display selection
+    input [15:0] tubeWdata,     // 16-bit data to display
+    input [31:0] tubeWdata32,   // 32-bit data to display
     
-    output reg [7:0] sel,     // Digit select signals
-    output reg [7:0] tube0,   // Segment pattern for upper digits
-    output reg [7:0] tube1    // Segment pattern for lower digits
+    output reg [7:0] sel,       // Digit select signals
+    output reg [7:0] tube0,     // Segment pattern for upper digits
+    output reg [7:0] tube1      // Segment pattern for lower digits
 );
 
     // Internal registers
-    reg [18:0] divclk_cnt = 0;     // Initialize counter
-    reg divclk = 0;                // Initialize divided clock
-    reg [3:0] disp_dat = 0;        // Initialize display data
-    reg [2:0] disp_bit = 0;        // Initialize bit counter
-    reg [31:0] data = 0;           // Initialize data register
+    reg [18:0] divClkCnt = 0;     // Initialize counter
+    reg divClk = 0;               // Initialize divided clock
+    reg [3:0] dispDat = 0;        // Initialize display data
+    reg [2:0] dispBit = 0;        // Initialize bit counter
+    reg [31:0] data = 0;          // Initialize data register
     
     // Initialize digit registers
     reg [3:0] num0 = 0, num1 = 0, num2 = 0, num3 = 0;
     reg [3:0] num4 = 0, num5 = 0, num6 = 0, num7 = 0;
 
     // Clock divider (using shorter count for simulation)
-    always @(posedge fpga_clk) begin
+    always @(posedge fpgaClk) begin
         if (!rst) begin
-            divclk_cnt <= 0;
-            divclk <= 0;
+            divClkCnt <= 0;
+            divClk <= 0;
         end
-        else if (divclk_cnt >= 4) begin  // Short count for simulation
-            divclk <= ~divclk;
-            divclk_cnt <= 0;
+        else if (divClkCnt >= 4) begin  // Short count for simulation
+            divClk <= ~divClk;
+            divClkCnt <= 0;
         end
         else begin
-            divclk_cnt <= divclk_cnt + 1;
+            divClkCnt <= divClkCnt + 1;
         end
     end
 
     // Data input handling
-    always @(posedge fpga_clk) begin
+    always @(posedge fpgaClk) begin
         if (!rst) begin
             data <= 32'h0;
         end
-        else if (TubeCtrl && IOWrite) begin
-            data <= tubewdata32;
+        else if (tubeCtrl && ioWrite) begin
+            data <= tubeWdata32;
         end
     end
 
@@ -73,30 +69,30 @@ module Tube(
     end
 
     // Display multiplexing and segment pattern generation
-    always @(posedge divclk) begin
+    always @(posedge divClk) begin
         if (!rst) begin
-            disp_bit <= 0;
+            dispBit <= 0;
             sel <= 8'h00;
-            disp_dat <= 4'h0;
+            dispDat <= 4'h0;
             tube0 <= 8'h00;
             tube1 <= 8'h00;
         end
         else begin
             // Update display selection and current digit
-            case (disp_bit)
-                3'b000: begin disp_dat <= num0; sel <= 8'b00000001; end
-                3'b001: begin disp_dat <= num1; sel <= 8'b00000010; end
-                3'b010: begin disp_dat <= num2; sel <= 8'b00000100; end
-                3'b011: begin disp_dat <= num3; sel <= 8'b00001000; end
-                3'b100: begin disp_dat <= num4; sel <= 8'b00010000; end
-                3'b101: begin disp_dat <= num5; sel <= 8'b00100000; end
-                3'b110: begin disp_dat <= num6; sel <= 8'b01000000; end
-                3'b111: begin disp_dat <= num7; sel <= 8'b10000000; end
+            case (dispBit)
+                3'b000: begin dispDat <= num0; sel <= 8'b00000001; end
+                3'b001: begin dispDat <= num1; sel <= 8'b00000010; end
+                3'b010: begin dispDat <= num2; sel <= 8'b00000100; end
+                3'b011: begin dispDat <= num3; sel <= 8'b00001000; end
+                3'b100: begin dispDat <= num4; sel <= 8'b00010000; end
+                3'b101: begin dispDat <= num5; sel <= 8'b00100000; end
+                3'b110: begin dispDat <= num6; sel <= 8'b01000000; end
+                3'b111: begin dispDat <= num7; sel <= 8'b10000000; end
             endcase
             
             // Update segment patterns
             if (sel > 8'b00001000) begin
-                case (disp_dat)
+                case (dispDat)
                     4'h0: tube0 <= 8'hfc;
                     4'h1: tube0 <= 8'h60;
                     4'h2: tube0 <= 8'hda;
@@ -118,7 +114,7 @@ module Tube(
                 tube1 <= 8'h00;  // Clear lower segments when showing upper
             end
             else begin
-                case (disp_dat)
+                case (dispDat)
                     4'h0: tube1 <= 8'hfc;
                     4'h1: tube1 <= 8'h60;
                     4'h2: tube1 <= 8'hda;
@@ -140,7 +136,7 @@ module Tube(
                 tube0 <= 8'h00;  // Clear upper segments when showing lower
             end
             
-            disp_bit <= disp_bit + 1;
+            dispBit <= dispBit + 1;
         end
     end
 

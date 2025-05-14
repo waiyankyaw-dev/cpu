@@ -3,10 +3,10 @@
 module Led(
     input clk,                  // Clock signal
     input rst,                  // Reset signal (active low)
-    input IOWrite,              // I/O write enable
-    input LEDCtrl,              // LED chip select
-    input [7:0] ledaddr,        // Address for LED selection
-    input [15:0] ledwdata,      // Data to write to LEDs
+    input ioWrite,              // I/O write enable
+    input ledCtrl,              // LED chip select
+    input [7:0] ledAddr,        // Address for LED selection
+    input [15:0] ledWdata,      // Data to write to LEDs
     output reg [15:0] led       // Physical LED outputs
 );
 
@@ -22,29 +22,29 @@ module Led(
             // Clear all LEDs on reset
             led <= 16'h0000;
         end
-        else if (LEDCtrl && IOWrite) begin
+        else if (ledCtrl && ioWrite) begin
             // Address decoding for different LED groups
-            case (ledaddr)
+            case (ledAddr)
                 ALL_LEDS_ADDR:
-                    led <= ledwdata;                   // Control all 16 LEDs
+                    led <= ledWdata;                   // Control all 16 LEDs
                 
                 LEFT_LEDS_ADDR:
-                    led <= {ledwdata[7:0], 8'b0};  // Control left 8 LEDs
+                    led <= {ledWdata[7:0], 8'b0};      // Control left 8 LEDs
                 
                 RIGHT_LEDS_ADDR:
-                    led <= {8'b0, ledwdata[7:0]}; // Control right 8 LEDs
+                    led <= {8'b0, ledWdata[7:0]};      // Control right 8 LEDs
                 
                 // Additional feature: individual LED control
                 SINGLE_LED_BASE_ADDR:
-                    led <= { 15'b0,ledwdata[0]};            // Control LED 0
+                    led <= {15'b0, ledWdata[0]};       // Control LED 0
                 
                 SINGLE_LED_BASE_ADDR + 8'h01:
-                    led <= { 14'b0 ,ledwdata[0], 1'b0};            // Control LED 1
+                    led <= {14'b0, ledWdata[0], 1'b0}; // Control LED 1
                 
                 // More individual LED controls can be added here
                 
                 default:
-                    led <= led;                       // Maintain current state
+                    led <= led;                        // Maintain current state
             endcase
         end
         else begin

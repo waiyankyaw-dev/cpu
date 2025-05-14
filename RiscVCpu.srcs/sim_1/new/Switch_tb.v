@@ -4,25 +4,25 @@ module Switch_tb();
     // Test signals
     reg clk;
     reg rst;
-    reg IOReadUnsigned;
-    reg IOReadSigned;
-    reg SwitchCtrl;
+    reg ioReadUnsigned;
+    reg ioReadSigned;
+    reg switchCtrl;
     reg [15:0] switch;
     reg [3:0] button;
-    reg [7:0] switchaddr;
-    wire [15:0] switchrdata;
+    reg [7:0] switchAddr;
+    wire [15:0] switchRdata;
     
     // Instantiate the Switch module
     Switch uut (
         .clk(clk),
         .rst(rst),
-        .IOReadUnsigned(IOReadUnsigned),
-        .IOReadSigned(IOReadSigned),
-        .SwitchCtrl(SwitchCtrl),
+        .ioReadUnsigned(ioReadUnsigned),
+        .ioReadSigned(ioReadSigned),
+        .switchCtrl(switchCtrl),
         .switch(switch),
         .button(button),
-        .switchaddr(switchaddr),
-        .switchrdata(switchrdata)
+        .switchAddr(switchAddr),
+        .switchRdata(switchRdata)
     );
     
     // Clock generation
@@ -35,12 +35,12 @@ module Switch_tb();
     initial begin
         // Initialize signals
         rst = 0;
-        IOReadUnsigned = 0;
-        IOReadSigned = 0;
-        SwitchCtrl = 0;
+        ioReadUnsigned = 0;
+        ioReadSigned = 0;
+        switchCtrl = 0;
         switch = 16'h0000;
         button = 4'h0;
-        switchaddr = 8'h00;
+        switchAddr = 8'h00;
         
         // Apply reset
         #5 rst = 1;
@@ -50,50 +50,50 @@ module Switch_tb();
         // Test 1: Read all 16 switches (address 0x00)
         $display("Test 1: Reading all 16 switches (address 0x00)");
         switch = 16'hA5A5; // Set switch value
-        switchaddr = 8'h00;
-        IOReadSigned = 1;
-        SwitchCtrl = 1;
+        switchAddr = 8'h00;
+        ioReadSigned = 1;
+        switchCtrl = 1;
         #20;
-        $display("Switches: 0x%h, Read data: 0x%h", switch, switchrdata);
+        $display("Switches: 0x%h, Read data: 0x%h", switch, switchRdata);
         
         // Test 2: Read upper 8 switches (address 0x10)
         $display("Test 2: Reading upper 8 switches (address 0x10)");
         switch = 16'hBEEF;
-        switchaddr = 8'h10;
-        IOReadUnsigned = 1;
-        IOReadSigned = 0;
+        switchAddr = 8'h10;
+        ioReadUnsigned = 1;
+        ioReadSigned = 0;
         #20;
-        $display("Switches: 0x%h, Read data: 0x%h", switch, switchrdata);
+        $display("Switches: 0x%h, Read data: 0x%h", switch, switchRdata);
         
         // Test 3: Read buttons (addresses 0x20, 0x24, 0x28, 0x2C)
         $display("Test 3: Reading buttons");
         button = 4'b1010; // Set some buttons pressed
         // Test case button
-        switchaddr = 8'h20;
+        switchAddr = 8'h20;
         #20;
-        $display("Buttons: 0x%h, Button 3 read: 0x%h", button, switchrdata);
+        $display("Buttons: 0x%h, Button 3 read: 0x%h", button, switchRdata);
         
         // Reset button
-        switchaddr = 8'h24;
+        switchAddr = 8'h24;
         #20;
-        $display("Buttons: 0x%h, Button 2 read: 0x%h", button, switchrdata);
+        $display("Buttons: 0x%h, Button 2 read: 0x%h", button, switchRdata);
         
         // Input A button
-        switchaddr = 8'h28;
+        switchAddr = 8'h28;
         #20;
-        $display("Buttons: 0x%h, Button 0 read: 0x%h", button, switchrdata);
+        $display("Buttons: 0x%h, Button 0 read: 0x%h", button, switchRdata);
         
         // Input B button
-        switchaddr = 8'h2C;
+        switchAddr = 8'h2C;
         #20;
-        $display("Buttons: 0x%h, Button 1 read: 0x%h", button, switchrdata);
+        $display("Buttons: 0x%h, Button 1 read: 0x%h", button, switchRdata);
         
         // Test 4: Disable switch control
         $display("Test 4: Disabled switch control");
-        SwitchCtrl = 0;
+        switchCtrl = 0;
         switch = 16'h1234;
         #20;
-        $display("Switches: 0x%h, Read data: 0x%h (should remain unchanged)", switch, switchrdata);
+        $display("Switches: 0x%h, Read data: 0x%h (should remain unchanged)", switch, switchRdata);
         
         // End simulation
         #20 $finish;

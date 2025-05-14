@@ -2,29 +2,23 @@
 
 module Tube_tb();
     // Test signals
-    reg clk, fpga_clk, rst;
-    reg clk_div_2s, button, button2;
-    reg IOWrite, TubeCtrl;
-    reg [7:0] tubeaddr;
-    reg [15:0] tubewdata;
-    reg [31:0] tubewdata32;
-    reg [15:0] testcase;
+    reg clk, fpgaClk, rst;
+    reg ioWrite, tubeCtrl;
+    reg [7:0] tubeAddr;
+    reg [15:0] tubeWdata;
+    reg [31:0] tubeWdata32;
     wire [7:0] sel, tube0, tube1;
 
     // Instantiate Tube module
     Tube uut (
         .clk(clk),
-        .fpga_clk(fpga_clk),
+        .fpgaClk(fpgaClk),
         .rst(rst),
-        .clk_div_2s(clk_div_2s),
-        .button(button),
-        .button2(button2),
-        .IOWrite(IOWrite),
-        .TubeCtrl(TubeCtrl),
-        .tubeaddr(tubeaddr),
-        .tubewdata(tubewdata),
-        .tubewdata32(tubewdata32),
-        .testcase(testcase),
+        .ioWrite(ioWrite),
+        .tubeCtrl(tubeCtrl),
+        .tubeAddr(tubeAddr),
+        .tubeWdata(tubeWdata),
+        .tubeWdata32(tubeWdata32),
         .sel(sel),
         .tube0(tube0),
         .tube1(tube1)
@@ -32,8 +26,8 @@ module Tube_tb();
 
     // Clock generation
     initial begin
-        fpga_clk = 0;
-        forever #5 fpga_clk = ~fpga_clk;  // 100MHz clock
+        fpgaClk = 0;
+        forever #5 fpgaClk = ~fpgaClk;  // 100MHz clock
     end
 
     initial begin
@@ -45,15 +39,11 @@ module Tube_tb();
     initial begin
         // Initialize all signals
         rst = 0;          // Start with reset active low
-        IOWrite = 0;
-        TubeCtrl = 0;
-        tubeaddr = 8'h60;
-        tubewdata = 16'h0000;
-        tubewdata32 = 32'h0;
-        testcase = 16'h0;
-        button = 0;
-        button2 = 0;
-        clk_div_2s = 0;
+        ioWrite = 0;
+        tubeCtrl = 0;
+        tubeAddr = 8'h60;
+        tubeWdata = 16'h0000;
+        tubeWdata32 = 32'h0;
 
         // Wait for 100ns for initial stabilization
         #100;
@@ -62,18 +52,18 @@ module Tube_tb();
         rst = 1;
         #100;
 
-        // Test 1: Write 0x12345678
-        TubeCtrl = 1;
-        IOWrite = 1;
-        tubewdata32 = 32'h11112222;
+        // Test 1: Write 0x11112222
+        tubeCtrl = 1;
+        ioWrite = 1;
+        tubeWdata32 = 32'h11112222;
         #500;  // Wait longer to see the effect
 
-        // Test 2: Write 0xABCDEF01
-        tubewdata32 = 32'h11112222;
+        // Test 2: Write different pattern
+        tubeWdata32 = 32'hABCDEF01;
         #500;
 
-        // Test 3: Write 0x00000000
-        tubewdata32 = 32'h00000000;
+        // Test 3: Write all zeros
+        tubeWdata32 = 32'h00000000;
         #500;
 
         // End simulation
@@ -82,8 +72,7 @@ module Tube_tb();
 
     // Monitor changes
     initial begin
-        $monitor("Time=%0t rst=%b sel=%b tube0=%b tube1=%b data=%h disp_dat=%h",
-                 $time, rst, sel, tube0, tube1, uut.data, uut.disp_dat);
+        $monitor("Time=%0t rst=%b sel=%b tube0=%b tube1=%b data=%h dispDat=%h",
+                 $time, rst, sel, tube0, tube1, uut.data, uut.dispDat);
     end
-
 endmodule

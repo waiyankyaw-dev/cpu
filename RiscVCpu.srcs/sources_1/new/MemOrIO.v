@@ -4,26 +4,26 @@ module MemOrIO(
     // Control signals
     input mRead,                // Memory read enable
     input mWrite,               // Memory write enable
-    input IOReadUnsigned,       // Unsigned I/O read enable
-    input IOReadSigned,         // Signed I/O read enable
-    input IOWrite,              // I/O write enable
+    input ioReadUnsigned,       // Unsigned I/O read enable
+    input ioReadSigned,         // Signed I/O read enable
+    input ioWrite,              // I/O write enable
     
     // Address and data buses
-    input [31:0] addr_in,       // Address from ALU
-    input [31:0] m_rdata,       // Data read from memory
-    input [15:0] io_rdata,      // Data read from I/O devices(from switch)
-    input [31:0] r_rdata,       // Data from register file (for writes)
+    input [31:0] addrIn,        // Address from ALU
+    input [31:0] mRdata,        // Data read from memory
+    input [15:0] ioRdata,       // Data read from I/O devices
+    input [31:0] rRdata,        // Data from register file (for writes)
     
     // Output connections
-    output [31:0] addr_out,     // Address to memory and I/O devices
-    output reg [31:0] r_wdata,  // write Data to register file
-    output reg [31:0] write_data,     // Data to memory or I/O (potentially sign-extended) <write to IO device, store>
-    output reg [31:0] write_data_32,  // Original 32-bit data for I/O devices
+    output [31:0] addrOut,      // Address to memory and I/O devices
+    output reg [31:0] rWdata,   // Data to register file
+    output reg [31:0] writeData,     // Data to memory/I/O
+    output reg [31:0] writeData32,   // Original 32-bit data for I/O devices
     
     // Peripheral select signals
-    output SwitchCtrl,          // Switch input control
-    output LEDCtrl,             // LED output control
-    output TubeCtrl             // 7-segment display control
+    output switchCtrl,          // Switch input control
+    output ledCtrl,             // LED output control
+    output tubeCtrl             // 7-segment display control
 );
 
     // Define peripheral address ranges
@@ -38,78 +38,72 @@ module MemOrIO(
     
     localparam TUBE_ADDR_RANGE_START = 8'h60;
     localparam TUBE_ADDR_RANGE_END = 8'h7F;
-    
-    // Special address for sequential display
-//    localparam TUBE_SPECIAL_ADDR = 8'h64;
 
     // Pass address directly to memory and I/O
-    assign addr_out = addr_in;
+    assign addrOut = addrIn;
     
     // Generate chip select signals based on address range and I/O operation
-    //input
-    assign SwitchCtrl = (IOReadSigned || IOReadUnsigned) && 
-                       (addr_in[7:0] >= SWITCH_ADDR_RANGE_START && 
-                        addr_in[7:0] <= SWITCH_ADDR_RANGE_END);
-
-    //output
+    assign switchCtrl = (ioReadSigned || ioReadUnsigned) && 
+                       (addrIn[7:0] >= SWITCH_ADDR_RANGE_START && 
+                        addrIn[7:0] <= SWITCH_ADDR_RANGE_END);
     
-    assign LEDCtrl = IOWrite && (addr_in[7:0] >= LED_ADDR_RANGE_START && 
-                                addr_in[7:0] <= LED_ADDR_RANGE_END);
+    assign ledCtrl = ioWrite && (addrIn[7:0] >= LED_ADDR_RANGE_START && 
+                                addrIn[7:0] <= LED_ADDR_RANGE_END);
     
-    assign TubeCtrl = IOWrite && (addr_in[7:0] >= TUBE_ADDR_RANGE_START && 
-                                  addr_in[7:0] <= TUBE_ADDR_RANGE_END);
+    assign tubeCtrl = ioWrite && (addrIn[7:0] >= TUBE_ADDR_RANGE_START && 
+                                  addrIn[7:0] <= TUBE_ADDR_RANGE_END);
 
-    // Data handling for register writeback (read from memory of I/O) (load)
+    // Data handling for register writeback
     always @(*) begin
         // Default to memory data
-        r_wdata = m_rdata;
+        rWdata = mRdata;
         
         // Handle I/O reads with proper extension
-        if (IOReadUnsigned || IOReadSigned) begin
-            case (addr_in[7:0])
+        if (ioReadUnsigned || ioReadSigned) begin
+            case (addrIn[7:0])
                 // Main 16-bit input (all switches)
                 SWITCH_ADDR_RANGE_START: begin
-                    if (IOReadUnsigned)
-                        r_wdata = {16'h0000, io_rdata};          // Zero-extend
+                    if (ioReadUnsigned)
+                        rWdata = {16'h0000, ioRdata};          // Zero-extend
                     else
-                        r_wdata = {{16{io_rdata[15]}}, io_rdata}; // Sign-extend
+                        rWdata = {{16{ioRdata[15]}}, ioRdata}; // Sign-extend
                 end
                 
                 // Upper 8 switches
                 SWITCH_ADDR_RANGE_START + 8'h10: begin
-                    if (IOReadUnsigned)
-                        r_wdata = {24'h000000, io_rdata[7:0]};    // Zero-extend
+                    if (ioReadUnsigned)
+                        rWdata = {24'h000000, ioRdata[7:0]};    // Zero-extend
                     else
-                        r_wdata = {{24{io_rdata[7]}}, io_rdata[7:0]}; // Sign-extend
+                        rWdata = {{24{ioRdata[7]}}, ioRdata[7:0]}; // Sign-extend
                 end
                 
                 // Buttons (use bottom 4 bits only)
-                SWITCH_ADDR_RANGE_START + 8'h20, //Test case button (button[3])
-                SWITCH_ADDR_RANGE_START + 8'h24, //Reset button (button[2])
-                SWITCH_ADDR_RANGE_START + 8'h28, //Input A button (button[0])
-                SWITCH_ADDR_RANGE_START + 8'h2C: begin //Input B button (button[1])
-                    r_wdata = {28'b0, io_rdata[3:0]};            // Always zero-extend buttons
+                SWITCH_ADDR_RANGE_START + 8'h20, 
+                SWITCH_ADDR_RANGE_START + 8'h24, 
+                SWITCH_ADDR_RANGE_START + 8'h28, 
+                SWITCH_ADDR_RANGE_START + 8'h2C: begin
+                    rWdata = {28'b0, ioRdata[3:0]};            // Always zero-extend buttons
                 end
                 
-                default: r_wdata = m_rdata;                      // Default to memory data
+                default: rWdata = mRdata;                      // Default to memory data
             endcase
         end
     end
 
     // Data preparation for memory/I/O writes
     always @(*) begin
-        if (mWrite || IOWrite) begin
+        if (mWrite || ioWrite) begin
             // For memory writes, use the full 32-bit value
             // For I/O writes, sign-extend the lower 16 bits for compatibility
-            write_data = mWrite ? r_rdata : {{16{r_rdata[15]}}, r_rdata[15:0]};
+            writeData = mWrite ? rRdata : {{16{rRdata[15]}}, rRdata[15:0]};
             
             // Always preserve the original 32-bit data for devices that need it
-            write_data_32 = r_rdata;
+            writeData32 = rRdata;
         end
         else begin
             // High impedance when not writing
-            write_data = 32'hZZZZZZZZ;
-            write_data_32 = 32'hZZZZZZZZ;
+            writeData = 32'hZZZZZZZZ;
+            writeData32 = 32'hZZZZZZZZ;
         end
     end
 
