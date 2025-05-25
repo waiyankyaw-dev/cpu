@@ -10,16 +10,14 @@ module Led(
     output reg [15:0] led       // Physical LED outputs
 );
 
-    // Define LED address mappings
+    //  LED address mappings
     localparam ALL_LEDS_ADDR = 8'h30;     // All 16 LEDs
     localparam LEFT_LEDS_ADDR = 8'h40;    // Left 8 LEDs
     localparam RIGHT_LEDS_ADDR = 8'h50;   // Right 8 LEDs
     localparam SINGLE_LED_BASE_ADDR = 8'h58; // Base for individual LED control
 
-    // LED control logic
     always @(negedge clk or negedge rst) begin
         if (~rst) begin
-            // Clear all LEDs on reset
             led <= 16'h0000;
         end
         else if (ledCtrl && ioWrite) begin
@@ -44,11 +42,10 @@ module Led(
                 // More individual LED controls can be added here
                 
                 default:
-                    led <= led;                        // Maintain current state
+                    led <= led;                        // Maintaining current state
             endcase
         end
         else begin
-            // Hold current state when not writing
             led <= led;
         end
     end

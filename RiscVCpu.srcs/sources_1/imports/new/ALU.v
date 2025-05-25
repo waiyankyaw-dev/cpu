@@ -33,7 +33,6 @@ module ALU (
     localparam ALU_SLT     = 5'b01010;
     localparam ALU_SLTU    = 5'b01011;
     localparam ALU_XOR     = 5'b10000;
-    localparam ALU_BITREV  = 5'b10001;
 
     //decode
     always @* begin
@@ -53,7 +52,6 @@ module ALU (
                     4'b1101: aluControl = ALU_SRA;  // sra
                     4'b0101: aluControl = ALU_SRL;  // srl
                     4'b0100: aluControl = ALU_XOR;  // xor
-                    4'b0110: aluControl = ALU_BITREV; // bit reverse
                     default: aluControl = 5'b00000;
                 endcase
             end
@@ -63,7 +61,7 @@ module ALU (
                     3'b000: aluControl = ALU_ADD;  // addi
                     3'b010: aluControl = ALU_SLT;  // slti
                     3'b011: aluControl = ALU_SLTU; // sltiu
-                    3'b100: aluControl = ALU_XOR;  // xori
+                    3'b100: aluControl = ALU_XOR;  // xoric
                     3'b110: aluControl = ALU_OR;   // ori
                     3'b111: aluControl = ALU_AND;  // andi
                     3'b001: aluControl = ALU_SLL;  // slli
@@ -75,7 +73,7 @@ module ALU (
         endcase
     end
 
-    // Execute ALU operations
+    // ALU operations
     always @* begin
         case (aluControl)
             ALU_AND:    aluResult = readData1 & operand2;      // and
@@ -88,11 +86,6 @@ module ALU (
             ALU_SLT:    aluResult = {31'b0, $signed(readData1) < $signed(operand2)}; // slt
             ALU_SLTU:   aluResult = {31'b0, readData1 < operand2}; // sltu 
             ALU_XOR:    aluResult = readData1 ^ operand2;      // xor
-            ALU_BITREV: begin // bit reverse (8-bit)
-                for (i = 0; i < 8; i = i + 1)
-                    aluResult[i] = readData1[7-i];
-                aluResult[31:8] = 0;
-            end
             default:    aluResult = 32'b0;
         endcase
     end

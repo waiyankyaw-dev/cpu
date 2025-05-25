@@ -75,8 +75,8 @@ set rc [catch {
   set_property ip_cache_permissions {read write} [current_project]
   set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY} [current_project]
   add_files -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.runs/synth_1/CPU.dcp
-  read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk.xci
   read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/prgrom/prgrom.xci
+  read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/cpuclk/cpuclk.xci
   read_ip -quiet C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/sources_1/ip/RAM/RAM.xci
   read_xdc C:/Users/cleve/Desktop/RiscVCpu/RiscVCpu.srcs/constrs_1/new/CPU_Constraint.xdc
   link_design -top CPU -part xc7a35tcsg324-1

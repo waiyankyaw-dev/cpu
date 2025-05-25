@@ -1,70 +1,66 @@
-`timescale 1ns / 1ps
-
 module CPU(
-    input fpgaRst,               // FPGA reset button
-    input fpgaClk,               // FPGA clock
-    input [11:0] switch,         // 11 DIP switches
-    input [3:0] button,          // 4 push buttons
+    input fpgaRst,
+    input fpgaClk,
+    input [11:0] switch,
+    input [3:0] button,
     
-    output [15:0] led,           // 16 LEDs
-    output [7:0] tubeSel,        // 7-segment display digit select
-    output [7:0] tube0,          // 7-segment display upper segments
-    output [7:0] tube1           // 7-segment display lower segments
+    output [15:0] led,
+    output [7:0] tubeSel,
+    output [7:0] tube0,
+    output [7:0] tube1
 );
 
     // Internal signal declarations
-    wire cpuClk;                 // CPU clock
-    wire rst;                    // Reset signal
-    
-    // Instruction fetch signals
-    wire [31:0] inst;            // Current instruction
-    wire [31:0] imm32;           // Immediate value
+    wire cpuClk;
+    wire rst;
+    wire [31:0] inst;
+    wire [31:0] imm32;
+    wire [31:0] pc;              // Added PC signal
     
     // ALU and branch control signals
     wire zero, negative, unsignedLess;
-    wire [31:0] aluResult;       // ALU result
-    wire [1:0] aluOp;            // ALU operation select
-    wire aluSrc;                 // ALU source select (reg/imm)
+    wire [31:0] aluResult;
+    wire [1:0] aluOp;
+    wire aluSrc;
     
     // Register and memory signals
-    wire [31:0] readData1;       // Register source 1
-    wire [31:0] readData2;       // Register source 2
-    wire [31:0] writeData;       // Data for memory/IO write
-    wire [31:0] writeData32;     // Full 32-bit data for IO
-    wire [31:0] addrOut;         // Memory/IO address
-    wire [31:0] ramDataOut;      // Data from memory
-    wire [31:0] memData;         // Data to register file
+    wire [31:0] readData1;
+    wire [31:0] readData2;
+    wire [31:0] writeData;
+    wire [31:0] writeData32;
+    wire [31:0] addrOut;
+    wire [31:0] ramDataOut;
+    wire [31:0] memData;
     
     // Control signals
-    wire memRead, memWrite;      // Memory control
-    wire regWrite;               // Register write enable
-    wire memOrIOtoReg;           // Select mem/IO->reg
-    wire ioReadUnsigned, ioReadSigned, ioWrite; // IO control
-    wire ledCtrl, switchCtrl, tubeCtrl; // Peripheral control
+    wire memRead, memWrite;
+    wire regWrite;
+    wire memOrIOtoReg;
+    wire ioReadUnsigned, ioReadSigned, ioWrite;
+    wire ledCtrl, switchCtrl, tubeCtrl;
     
     // Branch and jump signals
-    wire jump, jalr;             // Jump controls
-    wire beq, bne, blt, bltu, bge, bgeu; // Branch controls
-    wire [31:0] ra;              // Return address
+    wire jump, jalr;
+    wire beq, bne, blt, bltu, bge, bgeu;
+    wire [31:0] ra;
     
     // IO signals
-    wire [15:0] ioRdata;         // Data from IO devices
+    wire [15:0] ioRdata;
     
-    // Map reset signal
     assign rst = fpgaRst;
     
-    // Clock generation
     Clock clock(
         .clkIn1(fpgaClk),
         .rst(rst),
         .clkOut1(cpuClk)
     );
 
-    // Instruction fetch and PC update
+    // Fixed IFetch with PC output and rs1Data input
     IFetch iFetch(
         .clk(cpuClk),
         .rst(rst),
         .imm32(imm32),
+        .rs1Data(readData1),       // Added rs1Data for JALR
         .jump(jump),
         .jalr(jalr),
         .beq(beq),
@@ -78,19 +74,22 @@ module CPU(
         .unsignedLess(unsignedLess),
         .aluResult(aluResult),
         .ra(ra),
-        .inst(inst)
+        .inst(inst),
+        .pc_out(pc)                // Added PC output
     );
 
-    // Instruction decode and register file
+    // Fixed Decoder with PC input and JALR signal
     Decoder decoder(
         .clk(cpuClk),
         .rst(rst),
         .aluResult(aluResult),
+        .pc(pc),                   // Added PC input
         .memOrIOtoReg(memOrIOtoReg),
         .regWrite(regWrite),
         .inst(inst),
         .ra(ra),
         .jump(jump),
+        .jalr(jalr),               // Added JALR signal
         .ioData(memData),
         .ioReadSigned(ioReadSigned),
         .ioReadUnsigned(ioReadUnsigned),
@@ -99,7 +98,6 @@ module CPU(
         .imm32(imm32)
     );
     
-    // Control signal generation
     Controller controller(
         .inst(inst),
         .aluResultHigh(aluResult[31:10]),
@@ -122,7 +120,6 @@ module CPU(
         .bne(bne)
     );
     
-    // Data memory access
     DataMem dataMem(
         .clk(cpuClk),
         .memWrite(memWrite),
@@ -132,7 +129,6 @@ module CPU(
         .dout(ramDataOut)
     );
 
-    // ALU operations
     ALU alu(
         .readData1(readData1),
         .readData2(readData2),
@@ -147,7 +143,6 @@ module CPU(
         .unsignedLess(unsignedLess)
     );
     
-    // Memory/IO interface
     MemOrIO memOrIO(
         .mRead(memRead),
         .mWrite(memWrite),
@@ -167,7 +162,6 @@ module CPU(
         .tubeCtrl(tubeCtrl)
     );
 
-    // IO peripherals
     Switch switchModule(
         .clk(fpgaClk),
         .rst(rst),
@@ -177,7 +171,7 @@ module CPU(
         .switch(switch),
         .button(button),
         .switchAddr(addrOut[7:0]),
-        .switchRdata(ioRdata)
+        .switchReadData(ioRdata)
     );
     
     Led ledModule(

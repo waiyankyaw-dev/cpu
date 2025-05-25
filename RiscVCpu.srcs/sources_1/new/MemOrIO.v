@@ -61,20 +61,22 @@ module MemOrIO(
         // Handle I/O reads with proper extension
         if (ioReadUnsigned || ioReadSigned) begin
             case (addrIn[7:0])
-                // Main 16-bit input (all switches)
+                // Main 16-bit input (all 12 switches) - MODIFIED FOR 12-BIT FP
                 SWITCH_ADDR_RANGE_START: begin
+                    // For 12-bit floating point: use all 12 switches
+                    // Format: {switch[11:0]} represents S_EEE_MMMM_MMMM
                     if (ioReadUnsigned)
-                        rWdata = {16'h0000, ioRdata};          // Zero-extend
+                        rWdata = {20'h00000, ioRdata[11:0]};          // Zero-extend 12 bits
                     else
-                        rWdata = {{16{ioRdata[15]}}, ioRdata}; // Sign-extend
+                        rWdata = {{20{ioRdata[11]}}, ioRdata[11:0]};  // Sign-extend from bit 11 (sign bit)
                 end
                 
-                // Upper 8 switches
+                // Upper 8 switches - KEEP ORIGINAL FOR OTHER TEST CASES
                 SWITCH_ADDR_RANGE_START + 8'h10: begin
                     if (ioReadUnsigned)
-                        rWdata = {24'h000000, ioRdata[7:0]};    // Zero-extend
+                        rWdata = {24'h000000, ioRdata[7:0]};    // Zero-extend 8 bits
                     else
-                        rWdata = {{24{ioRdata[7]}}, ioRdata[7:0]}; // Sign-extend
+                        rWdata = {{24{ioRdata[7]}}, ioRdata[7:0]}; // Sign-extend from bit 7
                 end
                 
                 // Buttons (use bottom 4 bits only)

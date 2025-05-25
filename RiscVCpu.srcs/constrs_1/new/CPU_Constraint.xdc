@@ -1,10 +1,7 @@
-# Clock and reset
 set_property IOSTANDARD LVCMOS33 [get_ports fpgaClk]
 set_property IOSTANDARD LVCMOS33 [get_ports fpgaRst]
 set_property PACKAGE_PIN P17 [get_ports fpgaClk]
 set_property PACKAGE_PIN P15 [get_ports fpgaRst]
-
-# Switches
 set_property IOSTANDARD LVCMOS33 [get_ports {switch[11]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {switch[10]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {switch[9]}]
@@ -29,8 +26,6 @@ set_property PACKAGE_PIN P2 [get_ports {switch[8]}]
 set_property PACKAGE_PIN P3 [get_ports {switch[9]}]
 set_property PACKAGE_PIN P4 [get_ports {switch[10]}]
 set_property PACKAGE_PIN P5 [get_ports {switch[11]}]
-
-# LEDs
 set_property IOSTANDARD LVCMOS33 [get_ports {led[15]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {led[14]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {led[13]}]
@@ -63,18 +58,14 @@ set_property PACKAGE_PIN J4 [get_ports {led[12]}]
 set_property PACKAGE_PIN G3 [get_ports {led[13]}]
 set_property PACKAGE_PIN G4 [get_ports {led[14]}]
 set_property PACKAGE_PIN F6 [get_ports {led[15]}]
-
-# Buttons
 set_property IOSTANDARD LVCMOS33 [get_ports {button[3]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {button[2]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {button[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {button[0]}]
-set_property PACKAGE_PIN R17 [get_ports {button[0]}]
-set_property PACKAGE_PIN U4 [get_ports {button[1]}]
+set_property PACKAGE_PIN U4 [get_ports {button[0]}]
+set_property PACKAGE_PIN R17 [get_ports {button[1]}]
 set_property PACKAGE_PIN R11 [get_ports {button[2]}]
 set_property PACKAGE_PIN V1 [get_ports {button[3]}]
-
-# Tube select
 set_property PACKAGE_PIN G2 [get_ports tubeSel[7]]
 set_property IOSTANDARD LVCMOS33 [get_ports tubeSel[7]]
 set_property PACKAGE_PIN C2 [get_ports tubeSel[6]]
@@ -91,8 +82,6 @@ set_property PACKAGE_PIN E1 [get_ports tubeSel[1]]
 set_property IOSTANDARD LVCMOS33 [get_ports tubeSel[1]]
 set_property PACKAGE_PIN G6 [get_ports tubeSel[0]]
 set_property IOSTANDARD LVCMOS33 [get_ports tubeSel[0]]
-
-# Tube0 segments
 set_property PACKAGE_PIN B4 [get_ports {tube0[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {tube0[7]}]
 set_property PACKAGE_PIN A4 [get_ports {tube0[6]}]
@@ -109,8 +98,6 @@ set_property PACKAGE_PIN B2 [get_ports {tube0[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {tube0[1]}]
 set_property PACKAGE_PIN D5 [get_ports {tube0[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {tube0[0]}]
-
-# Tube1 segments
 set_property PACKAGE_PIN D4 [get_ports {tube1[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {tube1[7]}]
 set_property PACKAGE_PIN E3 [get_ports {tube1[6]}]

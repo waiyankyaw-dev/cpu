@@ -15,18 +15,16 @@ module Tube(
     output reg [7:0] tube1      // Segment pattern for lower digits
 );
 
-    // Internal registers
     reg [18:0] divClkCnt = 0;     // Initialize counter
     reg divClk = 0;               // Initialize divided clock
     reg [3:0] dispDat = 0;        // Initialize display data
     reg [2:0] dispBit = 0;        // Initialize bit counter
     reg [31:0] data = 0;          // Initialize data register
     
-    // Initialize digit registers
     reg [3:0] num0 = 0, num1 = 0, num2 = 0, num3 = 0;
     reg [3:0] num4 = 0, num5 = 0, num6 = 0, num7 = 0;
 
-    // Clock divider (using shorter count for simulation)
+    // Clock divider
     always @(posedge fpgaClk) begin
         if (!rst) begin
             divClkCnt <= 0;
