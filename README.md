@@ -1,37 +1,61 @@
 <div align=center>
+
 # RISC-V Single Cycle CPU
 
-### CS202: Computer Organization Project
-![RISC-V Image](./images/risc-v.png)
 
+### CS202: Computer Organization Project
+
+![RISC-V Image](./images/risc-v.png)
 
 </div>
 
-## Description of CPU
 
-**CPU Type:** Single Cycle RISC-V CPU
 
-### **Core Specifications:**
+
+
+## **Core Specifications:**
+
+- **CPU Type:** Single Cycle RISC-V CPU
 
 - **Instruction Set Architecture (ISA):** RISC-V (32-bit, RV32I subset). Uses 32 registers (x0-x31), each 32 bits wide. 
+
 - **Storage Scheme:** Harvard Architecture (separate instruction and data memory).
+
 - **I/O Scheme:** Memory-Mapped I/O (MMIO).
+
 - **CPU Clock:** 23 MHz (configurable via FPGA clock wizard).
+
 - **Cycles Per Instruction (CPI):** 1 (single-cycle CPU).
+
 - **Pipeline:** Not applicable (single-cycle).
+
 - **Addressing Unit**: Data Read and Write Bits: 32 bits (4 bytes) 
+
 - **Size of Instruction Space and Data Space**:  2^14 * 4 bytes = 64 KB
+
 - **Base address of stack space**  = 8'h00000000
+
 - **CPU Interface:** 
+
   - Clock: 23 MHz (FPGA clock wizard).
+
   - Reset: Active-high (via push button at 0xFFFFFC24).
+
   - Other I/O: 
+
     - 12 DIP switches (0xFFFFFC00)
+
     - 4 push buttons (0xFFFFFC20 for test case, 0xFFFFFC24 for exit button, 0xFFFFFC28 for input A, 0xFFFFFC2C for input B) 
+
     - 16 LEDs (0xFFFFFC30 for 16 leds, 0xFFFFFC40 for left  )
+
     - 7-segment display (0xFFFFFC60) 
 
-### **Architecture Design:**
+      
+
+      
+
+## **Architecture Design:**
 
 The CPU is a single-cycle processor with interconnected modules:
 
@@ -42,21 +66,17 @@ The CPU is a single-cycle processor with interconnected modules:
   - **ALU (Arithmetic Logic Unit):** Performs arithmetic (add, subtract) and logical (AND, OR, XOR, shifts, comparisons) operations.
   - **Controller:** Generates control signals based on opcode and funct fields.
   - **DataMem (Data Memory):** Handles `load`/`store` memory access.
-
 - **I/O Modules:**
   - **MemOrIO:** Routes data between CPU, memory, and I/O devices based on address ranges (e.g., 0xFFFFFC00-0xFFFFFC7F for I/O).
   - **Switch:** Interfaces with 12 DIP switches, providing 16-bit (0xFFFFFC00) and 8-bit (0xFFFFFC10) input values.
   - **Led:** Controls 16 LED outputs, with individual control for all (0xFFFFFC30), left 8 (0xFFFFFC40), and right 8 (0xFFFFFC50).
   - **Tube:** Manages the 8-digit 7-segment display (0xFFFFFC60) for decimal/hexadecimal output.
-
 - **Clock System:**
   - **Clock:** Global 23 MHz signal (FPGA clock wizard) synchronizes all modules.
-
 - **Internal Connections (Data and Control Paths):**
   - **Instruction Path:** `IFetch` → `Decoder` → `Controller` → `ALU` → `IFetch` (PC updates).
   - **Data Path:** `Decoder` (register read) → `ALU` → `MemOrIO` (memory/I/O) → `Decoder` (register write).
   - **Control Signals:** `Controller` distributes signals to all modules.
-
 - **External Interface:**
   - **Inputs:**
     - 12 DIP switches (0xFFFFFC00 for all, 0xFFFFFC10 for upper 8 switches).
@@ -67,11 +87,13 @@ The CPU is a single-cycle processor with interconnected modules:
     - 16 LEDs (0xFFFFFC30 for all leds, 0xFFFFFC40 for upper 8 leds, 0xFFFFFC50 for lower 8 leds).
     - 8-digit 7-segment display (0xFFFFFC60).
 
+
+
 ## Supported Instructions
 
 This CPU implementation supports the RISC-V RV32I base instruction set. No updates or optimizations were made beyond the baseline RV32I subset.
 
-## R-Type Instructions (Register-Register Operations)
+### R-Type Instructions (Register-Register Operations)
 
 | Instruction         | Opcode/Format | Description                                        |
 | ------------------- | ------------- | -------------------------------------------------- |
@@ -86,7 +108,7 @@ This CPU implementation supports the RISC-V RV32I base instruction set. No updat
 | `SRL rd, rs1, rs2`  | `0110011`     | Shift right logical: `rd = rs1 >> rs2[4:0]`        |
 | `SRA rd, rs1, rs2`  | `0110011`     | Shift right arithmetic: `rd = rs1 >>> rs2[4:0]`    |
 
-## I-Type Instructions (Immediate Operations)
+### I-Type Instructions (Immediate Operations)
 
 | Instruction           | Opcode/Format | Description                                                  |
 | --------------------- | ------------- | ------------------------------------------------------------ |
@@ -100,7 +122,7 @@ This CPU implementation supports the RISC-V RV32I base instruction set. No updat
 | `SRLI rd, rs1, shamt` | `0010011`     | Shift right logical immediate: `rd = rs1 >> shamt[4:0]`      |
 | `SRAI rd, rs1, shamt` | `0010011`     | Shift right arithmetic immediate: `rd = rs1 >>> shamt[4:0]`  |
 
-## Load Instructions (I-Type Memory Access)
+### Load Instructions (I-Type Memory Access)
 
 | Instruction           | Opcode/Format | Description                                                  |
 | --------------------- | ------------- | ------------------------------------------------------------ |
@@ -108,13 +130,13 @@ This CPU implementation supports the RISC-V RV32I base instruction set. No updat
 | `LB rd, offset(rs1)`  | `0000011`     | Load byte (signed): `rd = sign_extend(memory[rs1 + sign_extend(offset)][7:0])` |
 | `LBU rd, offset(rs1)` | `0000011`     | Load byte unsigned: `rd = zero_extend(memory[rs1 + sign_extend(offset)][7:0])` |
 
-## Store Instructions (S-Type Memory Access)
+### Store Instructions (S-Type Memory Access)
 
 | Instruction           | Opcode/Format | Description                                                 |
 | --------------------- | ------------- | ----------------------------------------------------------- |
 | `SW rs2, offset(rs1)` | `0100011`     | Store word: `memory[rs1 + sign_extend(offset)] = rs2[31:0]` |
 
-## Branch Instructions (B-Type Control Flow)
+### Branch Instructions (B-Type Control Flow)
 
 | Instruction             | Opcode/Format | Description                                                  |
 | ----------------------- | ------------- | ------------------------------------------------------------ |
@@ -125,19 +147,23 @@ This CPU implementation supports the RISC-V RV32I base instruction set. No updat
 | `BLTU rs1, rs2, offset` | `1100011`     | Branch if less than unsigned: `if (rs1 < rs2) PC = PC + sign_extend(offset)` |
 | `BGEU rs1, rs2, offset` | `1100011`     | Branch if greater/equal unsigned: `if (rs1 >= rs2) PC = PC + sign_extend(offset)` |
 
-## Jump Instructions (J-Type and I-Type Control Flow)
+### Jump Instructions (J-Type and I-Type Control Flow)
 
 | Instruction            | Opcode/Format | Description                                                  |
 | ---------------------- | ------------- | ------------------------------------------------------------ |
 | `JAL rd, offset`       | `1101111`     | Jump and link: `rd = PC + 4; PC = PC + sign_extend(offset)`  |
 | `JALR rd, rs1, offset` | `1100111`     | Jump and link register: `rd = PC + 4; PC = (rs1 + sign_extend(offset)) & ~1` |
 
-## Upper Immediate Instructions (U-Type)
+### Upper Immediate Instructions (U-Type)
 
 | Instruction     | Opcode/Format | Description                                                |
 | --------------- | ------------- | ---------------------------------------------------------- |
 | `LUI rd, imm`   | `0110111`     | Load upper immediate: `rd = imm << 12` (lower 12 bits = 0) |
 | `AUIPC rd, imm` | `0010111`     | Add upper immediate to PC: `rd = PC + (imm << 12)`         |
+
+
+
+
 
 ## I/O Memory Mapping
 
@@ -161,7 +187,7 @@ The CPU supports memory-mapped I/O with the following address ranges:
 
 
 
-# VI. System Board Usage Instructions
+## System Board Usage Instructions
 
 ![System Board Image](./images/system-board.png)
 
@@ -202,7 +228,7 @@ The CPU supports memory-mapped I/O with the following address ranges:
 
   - to display hexadecimal or decimal number from testcases
 
-    
+
 
 ## Self-Testing Instructions and Results
 
@@ -222,6 +248,8 @@ The CPU supports memory-mapped I/O with the following address ranges:
 | Basic Test Scenario 1 Integrated Testing | Tested the whole functionality of CPU with assembly code of test cases from basic test scenario 1 | On-board   | Pass   |
 | Basic Test Scenario 2 Integrated Testing | Tested the whole functionality of CPU with assembly code of test cases from basic test scenario 2 | On-board   | Pass   |
 
+
+
 ## Basic Test Scenario - 1
 
 - Basic Test Scenario-1 are written in RISC V assembly language. => [Test Scenario-1](./asm/scenario1.asm)
@@ -236,6 +264,8 @@ The CPU supports memory-mapped I/O with the following address ranges:
 | `3'b101`         | Compare test number ‘a’ and test number ‘b’ (from case 1 and case 2) using ‘bltu’ instruction. If the relationship holds, light up 8 LEDs. If the  relationship does not hold, turn off all 8 LEDs | Pass   |
 | `3'b110`         | Compare test number ‘a’ and test number ‘b’ (from case 1 and case 2) using ‘slt’ instruction, output the comparison result to the LED through the  store command. If the relationship is valid, light up one LED. If the relationship is not valid, turn off the LED | Pass   |
 | `3'b111`         | Compare test number ‘a’ and test number ‘b’ (from case 1 and case 2) using ‘sltu’ instruction, output the comparison result to the LED through the  store command. If the relationship is valid, light up one LED. If the relationship is not valid, turn off the LED | Pass   |
+
+
 
 
 
@@ -258,10 +288,11 @@ The CPU supports memory-mapped I/O with the following address ranges:
 
   
 
+
+
 ## Contribution
 
 | Contributor  | CPU Design & Implementation(in Verilog) | RISC-V Assembly Code | Report |
 | ------------ | --------------------------------------- | -------------------- | ------ |
 | Wai Yan Kyaw | ✔️                                       | ✔️                    | ✔️      |
 | Sean Sovann  | ✔️                                       | ✔️                    | ✔️      |
-
