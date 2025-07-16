@@ -10,7 +10,7 @@
 </div>
 
 
-
+- #### Project Requirements => [Detailed Project Requirements](./documents/CS202-Project-2025s-in-English.pdf)
 
 
 ## **Core Specifications:**
